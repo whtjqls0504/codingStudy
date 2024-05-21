@@ -1,6 +1,7 @@
 package com.beans;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class BoardDTO {
 
@@ -62,6 +63,10 @@ public class BoardDTO {
   }
 
 
+  public String getUploadDateTime() {
+      if(this.uploadDate == null) return "";
+      return this.uploadDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss"));
+  }
 
   
   

@@ -9,7 +9,7 @@ public class D {
   public static final String USERPW = "1111";
   
   
-  // insert 값을 넣기
+  // INSERT
   public static final String SQL_WRITE_INSERT = 
       "INSERT INTO board"
         + "(title, content)"
@@ -19,6 +19,18 @@ public class D {
       "SELECT num num, title title, content content," 
       + "upload_date uploadDate "
       + "FROM board ORDER BY num DESC";
+  
+  public static final String SQL_BOARD_SELECT_BY_NUM = 
+      "SELECT num num, title title, content content,"
+      + "upload_date uploadDate "
+      + "FROM board WHERE num = ?";
+  
+  public static final String SQL_BOARD_UPDATE = 
+      "UPDATE board SET title = ?, content = ? WHERE num = ?";
+  
+  
+  public static final String SQL_BOARD_DELETE = 
+      "DELETE FROM board WHERE num =?";
   
   
 }

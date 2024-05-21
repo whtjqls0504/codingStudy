@@ -21,8 +21,11 @@ public class BoardDAO {
   PreparedStatement pstmt;
   ResultSet rs;
   
-  public BoardDAO() {
+  
+  public BoardDAO() {   // 데이터베이스 연결하기
     try {
+      // jdbc 드라이버 로드
+      // jdbc : 데이터베이스와의 통신을 담당하는 인터페이스이다.
       Class.forName(D.DRIVER);
       conn = DriverManager.getConnection(D.URL, D.USERID, D.USERPW);
     } catch (Exception e) {
@@ -78,6 +81,115 @@ public class BoardDAO {
     }
     
     return list;
+  }
+
+  public int insert(BoardDTO dto) throws SQLException {
+
+    int cnt = 0;
+    
+    String title = dto.getTitle();
+    String content = dto.getContent();
+    
+    int num;
+    String[] generatedCols = {"num"};
+    
+    try {
+      pstmt = conn.prepareStatement(D.SQL_WRITE_INSERT, generatedCols);
+      pstmt.setString(1, title);
+      pstmt.setString(2, content);
+      cnt = pstmt.executeUpdate();
+      
+      if (cnt >0) {
+        rs = pstmt.getGeneratedKeys();
+        if(rs.next()) {
+          num = rs.getInt(1);
+          dto.setNum(num);
+        }
+      }
+      
+    } finally {
+      close();
+    }
+    
+    return cnt;
+  }
+
+  
+  // view.do를 위한 Dao
+  public List<BoardDTO> readByNum(int num) throws SQLException {
+
+    List<BoardDTO> list = null;
+    
+    try {
+      //????
+      conn.setAutoCommit(false);
+     
+      pstmt = conn.prepareStatement(D.SQL_BOARD_SELECT_BY_NUM);
+      pstmt.setInt(1, num);
+      rs = pstmt.executeQuery();
+      list = buildList(rs);
+      
+      conn.commit();
+      
+    } catch (SQLException e) {
+        conn.rollback();
+        throw e;
+      
+    } finally {
+        close();
+    }
+    
+    return list;
+  }
+
+  public List<BoardDTO> selectByNum(int num) throws SQLException{
+    List<BoardDTO> list = null;
+    
+    try {
+      pstmt = conn.prepareStatement(D.SQL_BOARD_SELECT_BY_NUM);
+      pstmt.setInt(1, num);
+      rs = pstmt.executeQuery();
+      list = buildList(rs);
+    } finally {
+      close();
+    }
+    
+    return list;
+  }
+
+  public int update(int num, String title, String content) throws SQLException {
+    
+    int cnt = 0;
+    
+    try {
+      pstmt = conn.prepareStatement(D.SQL_BOARD_UPDATE);
+      pstmt.setString(1, title);
+      pstmt.setString(2, content);
+      pstmt.setInt(3, num);
+      cnt = pstmt.executeUpdate();
+      
+    } finally {
+      close();
+    }
+    
+    
+    return cnt;
+  }
+
+  public int delete(int num) throws SQLException {
+
+    int cnt = 0;
+    
+    try {
+      pstmt = conn.prepareStatement(D.SQL_BOARD_DELETE);
+      pstmt.setInt(1, num);
+      cnt = pstmt.executeUpdate();
+      
+    } finally {
+      close();
+    }
+    
+    return cnt;
   }
   
 }

@@ -9,17 +9,16 @@ import javax.servlet.http.HttpServletResponse;
 import com.beans.BoardDAO;
 import com.beans.BoardDTO;
 
-public class ListCommand implements Command {
+public class SelectCommand implements Command {
 
   @Override
-  public void execute(HttpServletRequest request, HttpServletResponse response) 
-  {
+  public void execute(HttpServletRequest request, HttpServletResponse response) {
 
+    int num = Integer.parseInt(request.getParameter("num"));
     List<BoardDTO> list = null;
     
     try {
-       list = new BoardDAO().select();
-       
+      list = new BoardDAO().selectByNum(num);
     } catch (SQLException e) {
       e.printStackTrace();
     }
